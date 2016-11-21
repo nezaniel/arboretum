@@ -1,0 +1,13 @@
+{
+    "name": "nezaniel/arboretum",
+    "type": "neos-nezaniel",
+    "description": "Prototype implementation of the new Neos CR",
+    "require": {
+        "typo3/flow": "~3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nezaniel\\Arboretum\\": "Classes"
+        }
+    }
+}
