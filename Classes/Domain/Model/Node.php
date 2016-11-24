@@ -49,6 +49,9 @@ class Node
         $this->tree = $tree;
         $this->type = $type;
         $this->identifier = $identifier ?: Algorithms::generateUUID();
+        if ($tree) {
+            $this->tree->getGraph()->registerNode($this);
+        }
     }
 
 

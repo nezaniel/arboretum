@@ -23,6 +23,11 @@ class Graph
      */
     protected $rootLevelTrees;
 
+    /**
+     * @var array|Node[]
+     */
+    protected $nodeRegistry;
+
 
     /**
      * Graph constructor.
@@ -32,6 +37,14 @@ class Graph
         $this->rootNode = new Node(null, 'root');
     }
 
+    /**
+     * @param Node $node
+     * @return void
+     */
+    public function registerNode(Node $node)
+    {
+        $this->nodeRegistry[$node->getTree()->getIdentityHash()][$node->getIdentifier()] = $node;
+    }
 
     /**
      * @param array $identityComponents

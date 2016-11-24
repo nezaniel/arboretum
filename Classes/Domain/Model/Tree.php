@@ -115,6 +115,14 @@ class Tree
     }
 
     /**
+     * @return Graph
+     */
+    public function getGraph()
+    {
+        return $this->graph;
+    }
+
+    /**
      * @param Node $parent
      * @param Node $child
      * @param string $position
