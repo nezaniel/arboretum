@@ -23,12 +23,14 @@ class PerformanceTestCommandController extends CommandController
      */
     public function runCommand($trees = 1, $nodes = 100, $iterations = 10)
     {
+        $baseMemoryUsage = memory_get_usage(true);
+
         $totalTimeSpent = 0;
         for ($i = 0; $i < $iterations; $i++) {
             $totalTimeSpent += $this->runIteration($trees, $nodes);
         }
-        \TYPO3\Flow\var_dump(Files::bytesToSizeString(memory_get_peak_usage(true)));
-        \TYPO3\Flow\var_dump(round($totalTimeSpent / $iterations));
+        \TYPO3\Flow\var_dump(Files::bytesToSizeString(memory_get_peak_usage(true) - $baseMemoryUsage), 'Maximum additional memory usage');
+        \TYPO3\Flow\var_dump(round($totalTimeSpent / $iterations), 'Average time spent per iteration (ms)');
     }
 
     /**
