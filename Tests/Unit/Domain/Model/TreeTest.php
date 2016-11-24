@@ -1,5 +1,5 @@
 <?php
-namespace Nezaniel\Arboretum\Tests\Functional\Domain\Model;
+namespace Nezaniel\Arboretum\Tests\Unit\Domain\Model;
 
 /*
  * This file is part of the Nezaniel.Arboretum package.
@@ -60,49 +60,62 @@ class TreeTest extends UnitTestCase
             ],
             $this->fallbackTree
         );
+
+        $nodeA1 = new Arboretum\Model\Node($this->fallbackTree, null, 'A1');
+        $this->graph->getRootNode()->createOutgoingEdge($nodeA1, $this->fallbackTree);
+
+        $nodeB1 = new Arboretum\Model\Node($this->fallbackTree, null, 'B1');
+        $nodeA1->createOutgoingEdge($nodeB1, $this->fallbackTree);
+
+        $nodeC1 = new Arboretum\Model\Node($this->fallbackTree, null, 'C1');
+        $nodeA1->createOutgoingEdge($nodeC1, $this->fallbackTree);
+
+        $nodeA2 = new Arboretum\Model\Node($this->fallingBackTree, null, 'A2');
+        $this->graph->getRootNode()->createOutgoingEdge($nodeA2, $this->fallingBackTree);
+
+        $nodeB2 = new Arboretum\Model\Node($this->fallingBackTree, null, 'B2');
+        $nodeA2->createOutgoingEdge($nodeB2, $this->fallingBackTree);
+
+        $nodeA2->createOutgoingEdge($nodeC1, $this->fallingBackTree);
+
+        $nodeD2 = new Arboretum\Model\Node($this->fallingBackTree, null, 'D2');
+        $nodeA2->createOutgoingEdge($nodeD2, $this->fallingBackTree);
     }
 
 
     /**
-     * @todo build complete graph covering all fallback combinations
      * @test
      */
-    public function traverseReachesAllNodes()
+    public function traverseReachesAllNodesInFallbackTreeAndOnlyThem()
     {
-        $nodeIdentifier = 'nodeToBeFound';
-        $childNode = new Arboretum\Model\Node($this->fallbackTree, null, $nodeIdentifier);
-        $this->graph->getRootNode()->createOutgoingEdge($childNode, $this->fallbackTree);
-
         $foundNodeIdentifiers = [];
         $this->fallbackTree->traverse(function (Arboretum\Model\Node $node) use(&$foundNodeIdentifiers) {
-            $foundNodeIdentifiers[] = $node->getIdentifier();
+            if ($node->getType() !== 'root') {
+                $foundNodeIdentifiers[] = $node->getIdentifier();
+            }
         });
 
-        $this->assertContains(
-            $nodeIdentifier,
+        $this->assertEquals(
+            ['A1', 'B1', 'C1'],
             $foundNodeIdentifiers
         );
     }
 
-
     /**
-     * @todo build complete graph covering all fallback combinations
      * @test
      */
-    public function traverseReachesAllEdges()
+    public function traverseReachesAllNodesInFallingBackTreeAndOnlyThem()
     {
-        $edgeName = 'edgeToBeFound';
-        $childNode = new Arboretum\Model\Node($this->fallbackTree);
-        $this->graph->getRootNode()->createOutgoingEdge($childNode, $this->fallbackTree, null, $edgeName);
-
-        $foundEdgeNames = [];
-        $this->fallbackTree->traverse(null, function (Arboretum\Model\Edge $edge) use(&$foundEdgeNames) {
-            $foundEdgeNames[] = $edge->getName();
+        $foundNodeIdentifiers = [];
+        $this->fallingBackTree->traverse(function (Arboretum\Model\Node $node) use(&$foundNodeIdentifiers) {
+            if ($node->getType() !== 'root') {
+                $foundNodeIdentifiers[] = $node->getIdentifier();
+            }
         });
 
-        $this->assertContains(
-            $edgeName,
-            $foundEdgeNames
+        $this->assertEquals(
+            ['A2', 'B2', 'C1', 'D2'],
+            $foundNodeIdentifiers
         );
     }
 }
