@@ -105,6 +105,7 @@ class Edge
 
     /**
      * @param Node $child
+     * @todo update registration in tree
      */
     public function setChild($child)
     {
@@ -137,6 +138,7 @@ class Edge
 
     /**
      * @param string $name
+     * @todo update registration in tree
      */
     public function setName($name)
     {

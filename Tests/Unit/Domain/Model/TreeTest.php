@@ -62,24 +62,25 @@ class TreeTest extends UnitTestCase
         );
 
         $nodeA1 = new Arboretum\Model\Node($this->fallbackTree, null, 'A1');
-        $this->graph->getRootNode()->createOutgoingEdge($nodeA1, $this->fallbackTree);
+        $this->fallbackTree->connectNodes($this->graph->getRootNode(), $nodeA1);
 
         $nodeB1 = new Arboretum\Model\Node($this->fallbackTree, null, 'B1');
-        $nodeA1->createOutgoingEdge($nodeB1, $this->fallbackTree);
+        $this->fallbackTree->connectNodes($nodeA1, $nodeB1);
 
         $nodeC1 = new Arboretum\Model\Node($this->fallbackTree, null, 'C1');
-        $nodeA1->createOutgoingEdge($nodeC1, $this->fallbackTree);
+        $this->fallbackTree->connectNodes($nodeA1, $nodeC1);
+
 
         $nodeA2 = new Arboretum\Model\Node($this->fallingBackTree, null, 'A2');
-        $this->graph->getRootNode()->createOutgoingEdge($nodeA2, $this->fallingBackTree);
+        $this->fallingBackTree->connectNodes($this->graph->getRootNode(), $nodeA2);
 
         $nodeB2 = new Arboretum\Model\Node($this->fallingBackTree, null, 'B2');
-        $nodeA2->createOutgoingEdge($nodeB2, $this->fallingBackTree);
+        $this->fallingBackTree->connectNodes($nodeA2, $nodeB2);
 
-        $nodeA2->createOutgoingEdge($nodeC1, $this->fallingBackTree);
+        $this->fallingBackTree->connectNodes($nodeA2, $nodeC1);
 
         $nodeD2 = new Arboretum\Model\Node($this->fallingBackTree, null, 'D2');
-        $nodeA2->createOutgoingEdge($nodeD2, $this->fallingBackTree);
+        $this->fallingBackTree->connectNodes($nodeA2, $nodeD2);
     }
 
 

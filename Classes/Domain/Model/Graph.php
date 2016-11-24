@@ -43,7 +43,7 @@ class Graph
         $tree = new Tree($this, $identityComponents, $fallback);
         if ($fallback) {
             $fallback->traverse(null, function (Edge $edge) use ($tree) {
-                $edge->getParent()->createOutgoingEdge($edge->getChild(), $tree);
+                $tree->connectNodes($edge->getParent(), $edge->getChild());
             });
         } else {
             $this->rootLevelTrees[$tree->getIdentityHash()] = $tree;

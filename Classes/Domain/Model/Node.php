@@ -123,6 +123,30 @@ class Node
     }
 
     /**
+     * @param Edge $edge
+     * @return void
+     * @todo handle edge identity: force name? how to update?
+     */
+    public function registerOutgoingEdge(Edge $edge)
+    {
+        $edgeIdentifier = $edge->getName() ?: $edge->getChild()->getIdentifier();
+        $this->outgoingEdges[$edge->getTree()->getIdentityHash()][$edgeIdentifier] = $edge;
+    }
+
+    /**
+     * @param Edge $edge
+     * @return void
+     * @todo handle edge identity: force name? how to update?
+     */
+    public function deregisterOutgoingEdge(Edge $edge)
+    {
+        $edgeIdentifier = $edge->getName() ?: $edge->getChild()->getIdentifier();
+        if (isset($this->outgoingEdges[$edge->getTree()->getIdentityHash()][$edgeIdentifier])) {
+            unset($this->outgoingEdges[$edge->getTree()->getIdentityHash()][$edgeIdentifier]);
+        }
+    }
+
+    /**
      * @return array|Edge[]
      */
     public function getIncomingEdges()
@@ -140,15 +164,22 @@ class Node
     }
 
     /**
-     * @param Node $child
-     * @param Tree $tree
-     * @param string $position
-     * @param string $name
-     * @param bool $removed
+     * @param Edge $edge
+     * @return void
      */
-    public function createOutgoingEdge(Node $child, Tree $tree, $position = 'start', $name = null, $removed = false)
+    public function registerIncomingEdge(Edge $edge)
     {
-        $newEdge = new Edge($this, $child, $tree, $position, $name, $removed);
-        $this->outgoingEdges[$tree->getIdentityHash()][$name ?: $child->getIdentifier()] = $newEdge;
+        $this->incomingEdges[$edge->getTree()->getIdentityHash()] = $edge;
+    }
+
+    /**
+     * @param Edge $edge
+     * @return void
+     */
+    public function deregisterIncomingEdge(Edge $edge)
+    {
+        if (isset($this->incomingEdges[$edge->getTree()->getIdentityHash()])) {
+            unset($this->incomingEdges[$edge->getTree()->getIdentityHash()]);
+        }
     }
 }

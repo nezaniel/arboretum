@@ -45,13 +45,13 @@ class GraphTest extends UnitTestCase
         );
 
         $nodeA1 = new Arboretum\Model\Node($this->fallbackTree, null, 'A1');
-        $this->graph->getRootNode()->createOutgoingEdge($nodeA1, $this->fallbackTree);
+        $this->fallbackTree->connectNodes($this->graph->getRootNode(), $nodeA1);
 
         $nodeB1 = new Arboretum\Model\Node($this->fallbackTree, null, 'B1');
-        $nodeA1->createOutgoingEdge($nodeB1, $this->fallbackTree);
+        $this->fallbackTree->connectNodes($nodeA1, $nodeB1);
 
         $nodeC1 = new Arboretum\Model\Node($this->fallbackTree, null, 'C1');
-        $nodeA1->createOutgoingEdge($nodeC1, $this->fallbackTree);
+        $this->fallbackTree->connectNodes($nodeA1, $nodeC1);
     }
 
 

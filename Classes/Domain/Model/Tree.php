@@ -115,6 +115,33 @@ class Tree
     }
 
     /**
+     * @param Node $parent
+     * @param Node $child
+     * @param string $position
+     * @param string $name
+     * @return Edge
+     */
+    public function connectNodes(Node $parent, Node $child, $position = 'start', $name = null)
+    {
+        $edge = new Edge($parent, $child, $this, $position, $name);
+        $parent->registerOutgoingEdge($edge);
+        $child->registerIncomingEdge($edge);
+
+        return $edge;
+    }
+
+    /**
+     * @param Edge $edge
+     * @return void
+     */
+    public function disconnectNodes(Edge $edge)
+    {
+        $edge->getParent()->deregisterOutgoingEdge($edge);
+        $edge->getChild()->deregisterIncomingEdge($edge);
+        unset($edge);
+    }
+
+    /**
      * @param callable $nodeAction
      * @param callable $edgeAction
      * @return void
