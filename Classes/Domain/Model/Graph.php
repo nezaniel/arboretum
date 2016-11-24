@@ -18,34 +18,31 @@ class Graph
     protected $rootNode;
 
     /**
+     * The array of root level trees
      * @var array|Tree[]
      */
-    protected $trees;
+    protected $rootLevelTrees;
 
 
     /**
      * Graph constructor.
-     * @param array|Tree[] $trees
      */
-    public function __construct(array $trees = [])
+    public function __construct()
     {
         $this->rootNode = new Node(null, 'root');
-        foreach ($trees as $tree) {
-            $this->trees[$tree->getIdentityHash()] = $tree;
-        }
     }
 
 
     /**
      * @param array $identityComponents
-     * @param array $fallback
+     * @param Tree $fallback
      * @return Tree
      * @todo spawn edges along fallback tree
      */
-    public function createTree(array $identityComponents, array $fallback = [])
+    public function createTree(array $identityComponents, Tree $fallback = null)
     {
         $tree = new Tree($this, $identityComponents, $fallback);
-        $this->trees[$tree->getIdentityHash()] = $tree;
+            $this->rootLevelTrees[$tree->getIdentityHash()] = $tree;
         return $tree;
     }
 

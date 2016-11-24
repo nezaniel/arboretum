@@ -58,7 +58,7 @@ class TreeTest extends UnitTestCase
                     'market' => 'Hîthundor'
                 ]
             ],
-            [$this->fallbackTree->getIdentityHash()]
+            $this->fallbackTree
         );
     }
 

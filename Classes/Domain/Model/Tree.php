@@ -33,25 +33,36 @@ class Tree
     protected $identityComponents = [];
 
     /**
-     * Fallback trees
+     * The direct fallback tree
      *
-     * @var array
+     * @var Tree
      */
     protected $fallback;
+
+    /**
+     * The directly falling back trees
+     *
+     * @var array|Tree[]
+     */
+    protected $fallingBack = [];
 
 
     /**
      * Tree constructor.
      * @param Graph $graph
      * @param array $identityComponents
-     * @param array $fallback
+     * @param Tree $fallback
      */
-    public function __construct(Graph $graph, array $identityComponents, array $fallback = [])
+    public function __construct(Graph $graph, array $identityComponents, Tree $fallback = null)
     {
         $this->graph = $graph;
         $this->identityComponents = $identityComponents;
         $this->identityHash = TreeUtility::hashIdentityComponents($identityComponents);
-        $this->fallback = $fallback;
+
+        if ($fallback) {
+            $this->fallback = $fallback;
+            $fallback->addFallingBack($this);
+        }
     }
 
     /**
@@ -80,13 +91,28 @@ class Tree
     }
 
     /**
-     * @return array
+     * @return Tree
      */
     public function getFallback()
     {
         return $this->fallback;
     }
 
+    /**
+     * @return array|Tree[]
+     */
+    public function getFallingBack()
+    {
+        return $this->fallingBack;
+    }
+
+    /**
+     * @param Tree $tree
+     */
+    public function addFallingBack(Tree $tree)
+    {
+        $this->fallingBack[$tree->getIdentityHash()] = $tree;
+    }
 
     /**
      * @param callable $nodeAction
