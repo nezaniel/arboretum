@@ -3,7 +3,8 @@
     "type": "neos-nezaniel",
     "description": "Prototype implementation of the new Neos CR",
     "require": {
-        "typo3/flow": "*"
+        "typo3/flow": "*",
+        "neos/cqrs": "dev-master"
     },
     "autoload": {
         "psr-4": {

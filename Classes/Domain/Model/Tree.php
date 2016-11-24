@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Tree
 {
     /**
-     * @var Graph
+     * @var Arboretum\Aggregate\Graph
      */
     protected $graph;
 
@@ -49,27 +49,31 @@ class Tree
 
     /**
      * Tree constructor.
-     * @param Graph $graph
+     * @param Arboretum\Aggregate\Graph $graph
      * @param array $identityComponents
      * @param Tree $fallback
      */
-    public function __construct(Graph $graph, array $identityComponents, Tree $fallback = null)
+    public function __construct(Arboretum\Aggregate\Graph $graph, array $identityComponents, Tree $fallback = null)
     {
         $this->graph = $graph;
         $this->identityComponents = $identityComponents;
         $this->identityHash = TreeUtility::hashIdentityComponents($identityComponents);
 
         if ($fallback) {
-            $this->fallback = $fallback;
             $fallback->addFallingBack($this);
+            $fallback->traverse(null, function (Edge $edge) {
+                $this->connectNodes($edge->getParent(), $edge->getChild());
+            });
+            $this->fallback = $fallback;
         }
+        $graph->registerTree($this);
     }
 
     /**
-     * @param Graph $graph
+     * @param Arboretum\Aggregate\Graph $graph
      * @return void
      */
-    public function setGraph(Graph $graph)
+    public function setGraph(Arboretum\Aggregate\Graph $graph)
     {
         $this->graph = $graph;
     }
@@ -115,7 +119,7 @@ class Tree
     }
 
     /**
-     * @return Graph
+     * @return Arboretum\Aggregate\Graph
      */
     public function getGraph()
     {
