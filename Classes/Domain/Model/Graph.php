@@ -37,12 +37,18 @@ class Graph
      * @param array $identityComponents
      * @param Tree $fallback
      * @return Tree
-     * @todo spawn edges along fallback tree
      */
     public function createTree(array $identityComponents, Tree $fallback = null)
     {
         $tree = new Tree($this, $identityComponents, $fallback);
+        if ($fallback) {
+            $fallback->traverse(null, function (Edge $edge) use ($tree) {
+                $edge->getParent()->createOutgoingEdge($edge->getChild(), $tree);
+            });
+        } else {
             $this->rootLevelTrees[$tree->getIdentityHash()] = $tree;
+        }
+
         return $tree;
     }
 
