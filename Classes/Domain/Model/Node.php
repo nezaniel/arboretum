@@ -23,6 +23,11 @@ class Node
     protected $type;
 
     /**
+     * @var array
+     */
+    protected $properties = [];
+
+    /**
      * @var Tree
      */
     protected $tree;
@@ -43,12 +48,14 @@ class Node
      * @param Tree $tree
      * @param string $type
      * @param string $identifier
+     * @param array $properties
      */
-    public function __construct(Tree $tree = null, $type = 'unstructured', $identifier = null)
+    public function __construct(Tree $tree = null, $type = 'unstructured', $identifier = null, $properties = [])
     {
         $this->tree = $tree;
         $this->type = $type;
         $this->identifier = $identifier ?: Algorithms::generateUUID();
+        $this->properties = $properties;
         if ($tree) {
             $this->tree->getGraph()->registerNode($this);
         }
@@ -101,6 +108,23 @@ class Node
     public function setTree($tree)
     {
         $this->tree = $tree;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProperties()
+    {
+        return $this->properties;
+    }
+
+    /**
+     * @param $propertyName
+     * @return mixed|null
+     */
+    public function getProperty($propertyName)
+    {
+        return $this->properties[$propertyName] ?? null;
     }
 
     /**
