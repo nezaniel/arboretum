@@ -163,7 +163,7 @@ class Node
      */
     public function getIncomingEdgeInTree(Tree $tree)
     {
-        return $this->incomingEdges[$tree->getIdentityHash()];
+        return $this->incomingEdges[$tree->getIdentityHash()] ?? null;
     }
 
     /**
