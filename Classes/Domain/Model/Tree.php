@@ -60,9 +60,13 @@ class Tree
         $this->identityHash = TreeUtility::hashIdentityComponents($identityComponents);
 
         if ($fallback) {
-            $this->fallback = $fallback;
             $fallback->addFallingBack($this);
+            $fallback->traverse(null, function (Edge $edge) {
+                $this->connectNodes($edge->getParent(), $edge->getChild());
+            });
+            $this->fallback = $fallback;
         }
+        $graph->registerTree($this);
     }
 
     /**

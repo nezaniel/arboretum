@@ -18,10 +18,9 @@ class Graph
     protected $rootNode;
 
     /**
-     * The array of root level trees
      * @var array|Tree[]
      */
-    protected $rootLevelTrees;
+    protected $treeRegistry;
 
     /**
      * @var array|Node[]
@@ -47,22 +46,40 @@ class Graph
     }
 
     /**
-     * @param array $identityComponents
-     * @param Tree $fallback
-     * @return Tree
+     * @param Tree $tree
+     * @param string $nodeIdentifier
+     * @return Node
      */
-    public function createTree(array $identityComponents, Tree $fallback = null)
+    public function getNode(Tree $tree, $nodeIdentifier)
     {
-        $tree = new Tree($this, $identityComponents, $fallback);
-        if ($fallback) {
-            $fallback->traverse(null, function (Edge $edge) use ($tree) {
-                $tree->connectNodes($edge->getParent(), $edge->getChild());
-            });
-        } else {
-            $this->rootLevelTrees[$tree->getIdentityHash()] = $tree;
-        }
+        return $this->nodeRegistry[$tree->getIdentityHash()][$nodeIdentifier] ?? null;
+    }
 
-        return $tree;
+    /**
+     * @param Tree $tree
+     * @return void
+     */
+    public function registerTree(Tree $tree)
+    {
+        $this->treeRegistry[$tree->getIdentityHash()] = $tree;
+        $this->nodeRegistry[$tree->getIdentityHash()]['root'] = $this->rootNode;
+    }
+
+    /**
+     * @param string $treeIdentifier
+     * @return Tree|null
+     */
+    public function getTree($treeIdentifier)
+    {
+        return $this->treeRegistry[$treeIdentifier] ?? null;
+    }
+
+    /**
+     * @return Tree[]
+     */
+    public function getTrees()
+    {
+        return $this->treeRegistry;
     }
 
     /**
@@ -72,4 +89,5 @@ class Graph
     {
         return $this->rootNode;
     }
+
 }
