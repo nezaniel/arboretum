@@ -42,7 +42,7 @@ class Graph
      */
     public function registerNode(Node $node)
     {
-        $this->nodeRegistry[$node->getTree()->getIdentityHash()][$node->getIdentifier()] = $node;
+        $this->nodeRegistry[$node->getTree()->getIdentityHash() . '|' . $node->getIdentifier()] = $node;
     }
 
     /**
@@ -52,7 +52,15 @@ class Graph
      */
     public function getNode(Tree $tree, $nodeIdentifier)
     {
-        return $this->nodeRegistry[$tree->getIdentityHash()][$nodeIdentifier] ?? null;
+        return $this->nodeRegistry[$tree->getIdentityHash() . '|' . $nodeIdentifier] ?? null;
+    }
+
+    /**
+     * @return array|Node[]
+     */
+    public function getNodes()
+    {
+        return $this->nodeRegistry;
     }
 
     /**
@@ -62,7 +70,7 @@ class Graph
     public function registerTree(Tree $tree)
     {
         $this->treeRegistry[$tree->getIdentityHash()] = $tree;
-        $this->nodeRegistry[$tree->getIdentityHash()]['root'] = $this->rootNode;
+        $this->nodeRegistry[$tree->getIdentityHash() . '|' . 'root'] = $this->rootNode;
     }
 
     /**

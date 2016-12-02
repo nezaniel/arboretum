@@ -57,6 +57,7 @@ class Node
         $this->identifier = $identifier ?: Algorithms::generateUUID();
         $this->properties = $properties;
         if ($tree) {
+            $this->tree->registerNode($this);
             $this->tree->getGraph()->registerNode($this);
         }
     }

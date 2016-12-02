@@ -46,6 +46,11 @@ class Tree
      */
     protected $fallingBack = [];
 
+    /**
+     * @var array|Node[]
+     */
+    protected $nodeRegistry;
+
 
     /**
      * Tree constructor.
@@ -67,6 +72,24 @@ class Tree
             $this->fallback = $fallback;
         }
         $graph->registerTree($this);
+    }
+
+    /**
+     * @param Node $node
+     * @return void
+     */
+    public function registerNode(Node $node)
+    {
+        $this->nodeRegistry[$node->getIdentifier()] = $node;
+    }
+
+    /**
+     * @param string $nodeIdentifier
+     * @return Node
+     */
+    public function getNode($nodeIdentifier)
+    {
+        return $this->nodeRegistry[$nodeIdentifier] ?? null;
     }
 
     /**
@@ -199,5 +222,13 @@ class Tree
         if ($continue !== false) {
             $this->traverseNode($edge->getChild(), $nodeAction, $edgeAction);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getIdentityHash();
     }
 }
