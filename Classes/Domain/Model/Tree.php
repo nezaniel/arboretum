@@ -8,7 +8,6 @@ namespace Nezaniel\Arboretum\Domain\Model;
 use Nezaniel\Arboretum\Domain as Arboretum;
 use Nezaniel\Arboretum\Utility\TreeUtility;
 use TYPO3\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * The Tree domain model
@@ -40,11 +39,11 @@ class Tree
     protected $fallback;
 
     /**
-     * The directly falling back trees
+     * The first level variant trees
      *
      * @var array|Tree[]
      */
-    protected $fallingBack = [];
+    protected $variants = [];
 
     /**
      * @var array|Node[]
@@ -65,7 +64,7 @@ class Tree
         $this->identityHash = TreeUtility::hashIdentityComponents($identityComponents);
 
         if ($fallback) {
-            $fallback->addFallingBack($this);
+            $fallback->addVariant($this);
             $fallback->traverse(null, function (Edge $edge) {
                 $this->connectNodes($edge->getParent(), $edge->getChild());
             });
@@ -85,7 +84,7 @@ class Tree
 
     /**
      * @param string $nodeIdentifier
-     * @return Node
+     * @return Node|null
      */
     public function getNode($nodeIdentifier)
     {
@@ -104,7 +103,7 @@ class Tree
     /**
      * @return string
      */
-    public function getIdentityHash()
+    public function getIdentityHash() : string
     {
         return $this->identityHash;
     }
@@ -112,13 +111,13 @@ class Tree
     /**
      * @return array
      */
-    public function getIdentityComponents()
+    public function getIdentityComponents() : array
     {
         return $this->identityComponents;
     }
 
     /**
-     * @return Tree
+     * @return Tree|null
      */
     public function getFallback()
     {
@@ -128,23 +127,24 @@ class Tree
     /**
      * @return array|Tree[]
      */
-    public function getFallingBack()
+    public function getVariants() : array
     {
-        return $this->fallingBack;
+        return $this->variants;
     }
 
     /**
      * @param Tree $tree
+     * @return void
      */
-    public function addFallingBack(Tree $tree)
+    public function addVariant(Tree $tree)
     {
-        $this->fallingBack[$tree->getIdentityHash()] = $tree;
+        $this->variants[$tree->getIdentityHash()] = $tree;
     }
 
     /**
      * @return Graph
      */
-    public function getGraph()
+    public function getGraph() : Graph
     {
         return $this->graph;
     }
@@ -154,11 +154,12 @@ class Tree
      * @param Node $child
      * @param string $position
      * @param string $name
+     * @param array $properties
      * @return Edge
      */
-    public function connectNodes(Node $parent, Node $child, $position = 'start', $name = null)
+    public function connectNodes(Node $parent, Node $child, $position = 'start', $name = null, array $properties = []) : Edge
     {
-        $edge = new Edge($parent, $child, $this, $position, $name);
+        $edge = new Edge($parent, $child, $this, $position, $name, $properties);
         $parent->registerOutgoingEdge($edge);
         $child->registerIncomingEdge($edge);
 
@@ -227,7 +228,7 @@ class Tree
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString() : string
     {
         return $this->getIdentityHash();
     }
