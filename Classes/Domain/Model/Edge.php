@@ -38,9 +38,9 @@ class Edge
     protected $name;
 
     /**
-     * @var bool
+     * @var array
      */
-    protected $removed = false;
+    protected $properties = [];
 
 
     /**
@@ -50,16 +50,16 @@ class Edge
      * @param Tree $tree
      * @param string $position
      * @param string $name
-     * @param bool $removed
+     * @param array $properties
      */
-    public function __construct(Node $parent, Node $child, Tree $tree, $position = 'start', $name = null, $removed = false)
+    public function __construct(Node $parent, Node $child, Tree $tree, $position = 'start', $name = null, array $properties = [])
     {
         $this->parent = $parent;
         $this->child = $child;
         $this->tree = $tree;
         $this->position = $position;
         $this->name = $name;
-        $this->removed = $removed;
+        $this->properties = $properties;
     }
 
 
@@ -146,18 +146,76 @@ class Edge
     }
 
     /**
-     * @return boolean
+     * @return string
      */
-    public function isRemoved()
+    public function getNameForGraph()
     {
-        return $this->removed;
+        return $this->getName() . '@' . $this->getTree()->getIdentityHash();
     }
 
     /**
-     * @param boolean $removed
+     * @return array
      */
-    public function setRemoved($removed)
+    public function getProperties() : array
     {
-        $this->removed = $removed;
+        return $this->properties;
+    }
+
+    /**
+     * @param $propertyName
+     * @return mixed|null
+     */
+    public function getProperty($propertyName)
+    {
+        return $this->properties[$propertyName] ?? null;
+    }
+
+    /**
+     * @param $propertyName
+     * @param $propertyValue
+     * @return void
+     */
+    public function setProperty($propertyName, $propertyValue)
+    {
+        $this->properties[$propertyName] = $propertyValue;
+    }
+
+    /**
+     * @return Edge|null
+     */
+    public function getParentEdge()
+    {
+        return $this->getParent()->getIncomingEdgeInTree($this->tree);
+    }
+
+    /**
+     * @return void
+     */
+    public function mergeStructurePropertiesWithParent()
+    {
+        if (!$this->getParentEdge()) {
+            return;
+        }
+        $this->properties['accessRoles'] = array_intersect($this->getProperty('accessRoles') ?: [], $this->getParentEdge()->getProperty('accessRoles') ?: []);
+        $this->properties['hidden'] = $this->getProperty('hidden') || $this->getParentEdge()->getProperty('hidden');
+        if ($this->getProperty('hiddenBeforeDateTime')) {
+            if ($this->getParentEdge()->getProperty('hiddenBeforeDateTime')) {
+                $this->properties['hiddenBeforeDateTime'] = max($this->getProperty('hiddenBeforeDateTime'), $this->getParentEdge()->getProperty('hiddenBeforeDateTime'));
+            } else {
+                $this->properties['hiddenBeforeDateTime'] = $this->getProperty('hiddenBeforeDateTime');
+            }
+        } else {
+            $this->properties['hiddenBeforeDateTime'] = $this->getParentEdge()->getProperty('hiddenBeforeDateTime');
+        }
+        if ($this->getProperty('hiddenAfterDateTime')) {
+            if ($this->getParentEdge()->getProperty('hiddenAfterDateTime')) {
+                $this->properties['hiddenAfterDateTime'] = min($this->getProperty('hiddenAfterDateTime'), $this->getParentEdge()->getProperty('hiddenAfterDateTime'));
+            } else {
+                $this->properties['hiddenAfterDateTime'] = $this->getProperty('hiddenAfterDateTime');
+            }
+        } else {
+            $this->properties['hiddenAfterDateTime'] = $this->getParentEdge()->getProperty('hiddenAfterDateTime');
+        }
+        $this->properties['hiddenInIndex'] = $this->getProperty('hiddenInIndex') || $this->getParentEdge()->getProperty('hiddenInIndex');
     }
 }
