@@ -135,7 +135,10 @@ class Node
     {
         $outgoingEdges = [];
         foreach ($this->outgoingEdges as $treeIdentifier => $edges) {
-            $outgoingEdges = array_merge($outgoingEdges, $edges);
+            foreach ($edges as $edge) {
+                /** @var Edge $edge */
+                $outgoingEdges[$edge->getNameForGraph()] = $edge;
+            }
         }
 
         return $outgoingEdges;
@@ -209,5 +212,13 @@ class Node
         if (isset($this->incomingEdges[$edge->getTree()->getIdentityHash()])) {
             unset($this->incomingEdges[$edge->getTree()->getIdentityHash()]);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifierForGraph()
+    {
+        return $this->getIdentifier() . ($this->getTree() ? '@' . $this->getTree()->getIdentityHash() : '');
     }
 }
