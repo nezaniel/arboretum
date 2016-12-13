@@ -34,6 +34,7 @@ class Graph
     public function __construct()
     {
         $this->rootNode = new Node(null, 'root');
+        $this->registerNode($this->rootNode);
     }
 
     /**
@@ -42,7 +43,7 @@ class Graph
      */
     public function registerNode(Node $node)
     {
-        $this->nodeRegistry[$node->getTree()->getIdentityHash() . '|' . $node->getIdentifier()] = $node;
+        $this->nodeRegistry[$node->getIdentifierForGraph()] = $node;
     }
 
     /**
@@ -52,7 +53,7 @@ class Graph
      */
     public function getNode(Tree $tree, $nodeIdentifier)
     {
-        return $this->nodeRegistry[$tree->getIdentityHash() . '|' . $nodeIdentifier] ?? null;
+        return $this->nodeRegistry[$nodeIdentifier . '@' . $tree->getIdentityHash()] ?? null;
     }
 
     /**
@@ -70,7 +71,6 @@ class Graph
     public function registerTree(Tree $tree)
     {
         $this->treeRegistry[$tree->getIdentityHash()] = $tree;
-        $this->nodeRegistry[$tree->getIdentityHash() . '|' . 'root'] = $this->rootNode;
     }
 
     /**
@@ -98,4 +98,84 @@ class Graph
         return $this->rootNode;
     }
 
+    /**
+     * @return Tree
+     */
+    public function getFirstFallbackRootTree()
+    {
+        $tree = $this->treeRegistry[array_keys($this->treeRegistry)[0]];
+        while ($tree->getFallback()) {
+            $tree = $tree->getFallback();
+        }
+
+        return $tree;
+    }
+
+    /**
+     * @param Tree $fallbackTree
+     * @param callable $treeAction
+     * @return void
+     */
+    public function traverseVariantTrees(Tree $fallbackTree = null, callable $treeAction)
+    {
+        if (!$fallbackTree) {
+            $fallbackTree = $this->getFirstFallbackRootTree();
+        }
+
+        $continue = $treeAction($fallbackTree);
+        if ($continue !== false) {
+            foreach ($fallbackTree->getVariants() as $variantTree) {
+                $this->traverseVariantTrees($variantTree, $treeAction);
+            }
+        }
+    }
+
+
+    /**
+     * @param callable $nodeAction
+     * @param callable $edgeAction
+     * @return void
+     */
+    public function traverse(callable $nodeAction = null, callable $edgeAction = null)
+    {
+        $visitedNodes = [];
+        $this->traverseNode($this->getRootNode(), $nodeAction, $edgeAction, $visitedNodes);
+    }
+
+    /**
+     * @param Node $node
+     * @param callable $nodeAction
+     * @param callable $edgeAction
+     * @param array $visitedNodes
+     * @return void
+     */
+    protected function traverseNode(Node $node, callable $nodeAction = null, callable $edgeAction = null, array& $visitedNodes = [])
+    {
+        if (isset($visitedNodes[$node->getIdentifierForGraph()])) {
+            return;
+        }
+
+        $continue = $nodeAction ? $nodeAction($node) : true;
+        $visitedNodes[$node->getIdentifierForGraph()] = true;
+        if ($continue !== false) {
+            foreach ($node->getOutgoingEdges() as $edge) {
+                $this->traverseEdge($edge, $edgeAction, $nodeAction, $visitedNodes);
+            }
+        }
+    }
+
+    /**
+     * @param Edge $edge
+     * @param callable $edgeAction
+     * @param callable $nodeAction
+     * @param array $visitedNodes
+     * @return void
+     */
+    protected function traverseEdge(Edge $edge, callable $edgeAction = null, callable $nodeAction = null, array& $visitedNodes = [])
+    {
+        $continue = $edgeAction ? $edgeAction($edge) : true;
+        if ($continue !== false) {
+            $this->traverseNode($edge->getChild(), $nodeAction, $edgeAction, $visitedNodes);
+        }
+    }
 }
