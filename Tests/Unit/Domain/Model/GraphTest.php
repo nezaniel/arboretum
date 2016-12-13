@@ -33,7 +33,8 @@ class GraphTest extends UnitTestCase
 
         $this->graph = new Arboretum\Model\Graph();
 
-        $this->fallbackTree = $this->graph->createTree(
+        $this->fallbackTree = new Arboretum\Model\Tree(
+            $this->graph,
             [
                 'workspace' => 'live',
                 'site' => 'neos.io',
@@ -60,7 +61,8 @@ class GraphTest extends UnitTestCase
      */
     public function createTreeWithFallbackSpawnsFallbackEdges()
     {
-        $fallingBackTree = $this->graph->createTree(
+        $variantTree = new Arboretum\Model\Tree(
+            $this->graph,
             [
                 'workspace' => 'live',
                 'site' => 'neos.io',
@@ -73,7 +75,7 @@ class GraphTest extends UnitTestCase
         );
 
         $foundNodeIdentifiers = [];
-        $fallingBackTree->traverse(function (Arboretum\Model\Node $node) use(&$foundNodeIdentifiers) {
+        $variantTree->traverse(function (Arboretum\Model\Node $node) use(&$foundNodeIdentifiers) {
             if ($node->getType() !== 'root') {
                 $foundNodeIdentifiers[] = $node->getIdentifier();
             }

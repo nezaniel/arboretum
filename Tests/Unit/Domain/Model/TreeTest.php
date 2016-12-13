@@ -9,7 +9,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Test cases for the tree
+ * Test cases for trees
  */
 class TreeTest extends UnitTestCase
 {
@@ -38,7 +38,8 @@ class TreeTest extends UnitTestCase
 
         $this->graph = new Arboretum\Model\Graph();
 
-        $this->fallbackTree = $this->graph->createTree(
+        $this->fallbackTree = new Arboretum\Model\Tree(
+            $this->graph,
             [
                 'workspace' => 'live',
                 'site' => 'neos.io',
@@ -49,7 +50,8 @@ class TreeTest extends UnitTestCase
             ]
         );
 
-        $this->fallingBackTree = $this->graph->createTree(
+        $this->fallingBackTree = new Arboretum\Model\Tree(
+            $this->graph,
             [
                 'workspace' => 'live',
                 'site' => 'neos.io',
