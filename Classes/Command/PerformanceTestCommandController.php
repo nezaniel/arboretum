@@ -8,7 +8,7 @@ namespace Nezaniel\Arboretum\Command;
 use Nezaniel\Arboretum\Domain as Arboretum;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * The performance test command controller
