@@ -5,8 +5,8 @@ namespace Nezaniel\Arboretum\Utility;
  * This file is part of the Nezaniel.Arboretum package.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Utility\Arrays;
 
 /**
  * The Tree utility library

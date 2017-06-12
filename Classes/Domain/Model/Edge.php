@@ -5,7 +5,7 @@ namespace Nezaniel\Arboretum\Domain\Model;
  * This file is part of the Nezaniel.Arboretum package.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The Edge domain model

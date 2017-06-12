@@ -7,7 +7,7 @@ namespace Nezaniel\Arboretum\Domain\Model;
 
 use Nezaniel\Arboretum\Domain as Arboretum;
 use Nezaniel\Arboretum\Utility\TreeUtility;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The Tree domain model

@@ -6,9 +6,9 @@ namespace Nezaniel\Arboretum\Command;
  */
 
 use Nezaniel\Arboretum\Domain as Arboretum;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Utility\Files;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Utility\Files;
 
 /**
  * The performance test command controller
@@ -29,8 +29,8 @@ class PerformanceTestCommandController extends CommandController
         for ($i = 0; $i < $iterations; $i++) {
             $totalTimeSpent += $this->runIteration($trees, $nodes);
         }
-        \TYPO3\Flow\var_dump(Files::bytesToSizeString(memory_get_peak_usage(true) - $baseMemoryUsage), 'Maximum additional memory usage');
-        \TYPO3\Flow\var_dump(round($totalTimeSpent / $iterations), 'Average time spent per iteration (ms)');
+        \Neos\Flow\var_dump(Files::bytesToSizeString(memory_get_peak_usage(true) - $baseMemoryUsage), 'Maximum additional memory usage');
+        \Neos\Flow\var_dump(round($totalTimeSpent / $iterations), 'Average time spent per iteration (ms)');
     }
 
     /**
